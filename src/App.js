@@ -4,20 +4,25 @@ import WebViewer, { PDFNet } from '@pdftron/webviewer';
 
 function App() {
   const viewer = useRef(null);
-  const [text, setText] = useState("Overview");
+  const [text, setText] = useState("");
   const [list, setList] = useState(['Contrato', 'Saldo']);
   let fileInput = React.createRef();
+  const [DocSet, setDocSet] = useState(true);
 
   const handleChange = (e) => {
-    setText(e.target.value);
+    if(e.target.value !== "")
+      setText(e.target.value);
   }
 
   const updateSearch = (e) => {
-    const newList = list.concat(text);
-    setList(newList);
+    if(text !== list[list.length-1] && text!==""){
+      const newList = list.concat(text);
+      setList(newList);
+    }
   }
 
 const fileSelected = () => {
+  let count = 1;
     const webviewinstance = new WebViewer(
       {
         path: '/webviewer/lib',
@@ -34,29 +39,23 @@ const fileSelected = () => {
             //Rectangle annotation
             const rectangleAnnot = new Annotations.RectangleAnnotation();
             rectangleAnnot.PageNumber = result.pageNum;
-            rectangleAnnot.X = result.quads[0].Sx;
-            rectangleAnnot.Y = result.quads[0].Tx;
-            rectangleAnnot.Width = 100;
-            rectangleAnnot.Height = 20;
-            rectangleAnnot.Author = annotManager.getCurrentUser();
 
-            //redaction annotation
-            const annotation = new Annotations.RedactionAnnotation();
-            annotation.PageNumber = result.pageNum;
-            annotation.Quads = result.quads;
-            annotation.StrokeColor = new Annotations.Color(136, 39, 31);
-            console.log(result.Quads);
+            rectangleAnnot.X = result.quads[0].Sx-2;
+            rectangleAnnot.Y = result.quads[0].Tx-2;
+            rectangleAnnot.Width = result.quads[0].Rx- result.quads[0].Sx+5;
+            rectangleAnnot.Height = result.quads[0].ca- result.quads[0].Tx+5;;
+            rectangleAnnot.Author = annotManager.getCurrentUser();
+            rectangleAnnot.StrokeColor = 
+
             console.log(result.quads);
+
             return rectangleAnnot;
           });
       
           annotManager.addAnnotations(newAnnotations);
           annotManager.drawAnnotationsFromList(newAnnotations);
         };
-
-
         
-
         docViewer.on('documentLoaded', async () => {
           let searchPattern= "";
             searchPattern += list.join('|');
@@ -76,34 +75,30 @@ const fileSelected = () => {
           instance.addSearchListener(searchListener);
           // start search after document loads
              instance.searchTextFull(searchPattern, searchOptions);
-          
         });
     });
+    
 }
-  const Complete = () => {
-
-  }
-
-  useEffect(() => {
-
-
-  }, []);
 
   return(    
     <Fragment>
-      <div>
-        <input onChange={handleChange}></input>
-        <button onClick={updateSearch}>update search</button>
-        <button onClick={Complete}>Complete</button>
-        <input id="file_upload" type='file' accept='.pdf' multiple='false' onChange={fileSelected} ref={fileInput}></input>
+      <div style={{ height:'100vh', display:'flex', flexDirection:'row',marginLeft:'10px'}}>
+      <div  style={{height:'100vh',width:'20%', display:'flex', flexDirection:'column',marginLeft:'10px'}}>
+        <label>Text to search</label>
+        <input onChange={handleChange} style={{height:'30px', width:'80%'}}></input>
+        {/* <label>Annotation</label>
+        <input onChange={handleChange} style={{height:'30px', width:'80%'}}></input> */}
+        <button onClick={updateSearch} style={{height:'30px', width:'50%', marginTop:'10px'}}>Add to search list</button>
         <ul>
           {list.map(function(item) {
             return <li key={item}>{`${item.toString()}`}</li>;
           })}
         </ul>
+        <input id="file_upload" type='file' accept='.pdf' multiple='false' onChange={fileSelected} ref={fileInput} ></input>
       </div>
-      <div className="MyComponent">
-        <div className="webviewer" ref={viewer} style={{height: "80vh"}}></div>
+      <div className="MyComponent" style={{width: "80%"}}>
+        <div className="webviewer" ref={viewer}  style={{height: "100vh"}}></div>
+      </div>
       </div>
     </Fragment>
   );
