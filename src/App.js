@@ -27,6 +27,9 @@ function App() {
     setDocSet(false);
     console.log(DocSet);
   }
+  const destroy = () => {
+    setDocSet(true);
+  }
 
 const fileSelected = () => {
   console.log(fileInput.current.files[0]);
@@ -92,24 +95,21 @@ const fileSelected = () => {
   return(    
     <Fragment>
       <div style={{ height:'100vh', display:'flex', flexDirection:'row',marginLeft:'10px'}}>
-      <div  style={{height:'100vh',width:'20%', display:'flex', flexDirection:'column',marginLeft:'10px'}}>
-        <label>Text to search</label>
-        <input onChange={handleChange} style={{height:'30px', width:'80%'}}></input>
-        <button onClick={updateSearch} style={{height:'30px', width:'50%', marginTop:'10px'}}>Add to search list</button>
-        <ul>
-          {list.map(function(item) {
-            return <li key={item}>{`${item.toString()}`}</li>;
-          })}
-        </ul>
-        <input id="file_upload" type='file' accept='.pdf' multiple='false' onChange={fileSelected} ref={fileInput} ></input>
-        <button onClick={updateState}>Bring PDF!</button>
-      </div>
-      { !DocSet &&
-        <Pdfviewer file={file} ></Pdfviewer> 
-      }
-      {/* <div className="MyComponent" style={{width: "80%"}}>
-        <div className="webviewer" ref={viewer}  style={{height: "100vh"}}></div>
-      </div> */}
+        <div  style={{height:'100vh',width:'20%', display:'flex', flexDirection:'column',marginLeft:'10px'}}>
+          <label>Text to search</label>
+          <input onChange={handleChange} style={{height:'30px', width:'80%'}}></input>
+          <button onClick={updateSearch} style={{height:'30px', width:'50%', marginTop:'10px'}}>Add to search list</button>
+          <ul>
+            {list.map(function(item) {
+              return <li key={item}>{`${item.toString()}`}</li>;
+            })}
+          </ul>
+          <input id="file_upload" type='file' accept='.pdf' multiple='false' onClick={destroy} onChange={fileSelected} ref={fileInput} ></input>
+          <button onClick={updateState}>SEARCH</button>
+        </div>
+        { !DocSet &&
+          <Pdfviewer file={file} searchList = {list}></Pdfviewer> 
+        }
       </div>
     </Fragment>
   );
