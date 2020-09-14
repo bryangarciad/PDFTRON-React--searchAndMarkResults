@@ -22,7 +22,6 @@ function App() {
   }
 
 const fileSelected = () => {
-  let count = 1;
     const webviewinstance = new WebViewer(
       {
         path: '/webviewer/lib',
