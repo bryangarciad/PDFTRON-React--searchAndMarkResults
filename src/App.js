@@ -5,7 +5,6 @@ import Pdfviewer from './components/pdfviewer';
 function App() {
   const [text, setText] = useState("");
   const [list, setList] = useState(['Contrato', 'Saldo']);
-  // let colorList = [{r:255,g:0,b:0}, {r:0,g:255,b:0}];
   const [colorList, setColorList] = useState([{r:255,g:0,b:0}, {r:0,g:255,b:0}]);
   let fileInput = React.createRef();
   const [DocSet, setDocSet] = useState(true);
@@ -29,6 +28,7 @@ function App() {
   }
 
   const updateSearch = (e) => {
+    setDocSet(true);
     if(text !== list[list.length-1] && text!==""){
       const newList = list.concat(text);
       const rgbArr = ColorGenerator();
@@ -46,31 +46,29 @@ function App() {
     setDocSet(true);
   }
 
-const fileSelected = () => {
-  console.log(fileInput.current.files[0]);
-  setFile(fileInput.current.files[0])
-}
+  const fileSelected = () => {
+    console.log(fileInput.current.files[0]);
+    setFile(fileInput.current.files[0])
+  }
 
   return(    
-    <Fragment>
-      <div style={{ height:'100vh', display:'flex', flexDirection:'row',marginLeft:'10px'}}>
-        <div  style={{height:'100vh',width:'20%', display:'flex', flexDirection:'column',marginLeft:'10px'}}>
-          <label>Text to search</label>
-          <input onChange={handleChange} style={{height:'30px', width:'80%'}}></input>
-          <button onClick={updateSearch} style={{height:'30px', width:'50%', marginTop:'10px'}}>Add to search list</button>
-          <ul>
-            {list.map(function(item, key) {
-              return <li key={item}><span style={{backgroundColor: getColorRGB(key)}}>{`${item}`}</span></li>;
-            })}
-          </ul>
-          <input id="file_upload" type='file' accept='.pdf' multiple='false' onClick={destroy} onChange={fileSelected} ref={fileInput} ></input>
-          <button onClick={updateState}>SEARCH</button>
-        </div>
-        { !DocSet &&
-          <Pdfviewer file={file} searchList = {list} colorList = {colorList}></Pdfviewer> 
-        }
+    <div style={{ height:'100vh', display:'flex', flexDirection:'row',marginLeft:'10px'}}>
+      <div  style={{height:'100vh',width:'20%', display:'flex', flexDirection:'column',marginLeft:'10px'}}>
+        <label>Text to search</label>
+        <input onChange={handleChange} style={{height:'30px', width:'80%'}}></input>
+        <button onClick={updateSearch} style={{height:'30px', width:'50%', marginTop:'10px'}}>Add to search list</button>
+        <ul>
+          {list.map(function(item, key) {
+            return <li key={item}><span style={{backgroundColor: getColorRGB(key)}}>{`${item}`}</span></li>;
+          })}
+        </ul>
+        <input id="file_upload" type='file' accept='.pdf' multiple='false' onClick={destroy} onChange={fileSelected} ref={fileInput} ></input>
+        <button onClick={updateState}>SEARCH</button>
       </div>
-    </Fragment>
+      { !DocSet &&
+        <Pdfviewer file={file} searchList = {list} colorList = {colorList}></Pdfviewer> 
+      }
+    </div>
   );
 };
 export default App;
