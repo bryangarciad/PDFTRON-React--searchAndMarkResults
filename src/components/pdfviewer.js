@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react'
-import WebViewer, { PDFNet } from '@pdftron/webviewer';
+import WebViewer from '@pdftron/webviewer';
 
 function Pdfviewer(props) {
     const viewer = useRef(null);
