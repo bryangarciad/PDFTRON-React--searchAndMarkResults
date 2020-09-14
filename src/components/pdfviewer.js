@@ -1,9 +1,10 @@
 import React, {useEffect, useState, useRef} from 'react'
 import WebViewer from '@pdftron/webviewer';
 
+
 function Pdfviewer(props) {
     const viewer = useRef(null);
-
+    let FoundCounter = 0;
     useEffect(() => {
         console.log(props.file);
         WebViewer(
@@ -14,24 +15,28 @@ function Pdfviewer(props) {
             viewer.current,
             ).then((instance) => {
                 const { annotManager, docViewer, Annotations } = instance;
+
                 if(props.file  != null)
                     instance.loadDocument(props.file, { filename: props.file.name });
 
                 const searchListener = (searchPattern, options, results) => {
                     const newAnnotations = results.map(result => {
                         //Rectangle annotation
+                
+                        let ColorArray = props.colorList[props.searchList.findIndex( element => element.toUpperCase() === results[FoundCounter].DC.toUpperCase())];
+                        
+                        
                         const rectangleAnnot = new Annotations.RectangleAnnotation();
-                        rectangleAnnot.PageNumber = result.pageNum;
+                        if(ColorArray!== undefined)
+                            rectangleAnnot.StrokeColor = new Annotations.Color(ColorArray.r,ColorArray.g,ColorArray.b);
 
+                        rectangleAnnot.PageNumber = result.pageNum;
                         rectangleAnnot.X = result.quads[0].Sx-2;
                         rectangleAnnot.Y = result.quads[0].Tx-2;
-                        rectangleAnnot.Width = result.quads[0].Rx- result.quads[0].Sx+5;
-                        rectangleAnnot.Height = result.quads[0].ca- result.quads[0].Tx+5;;
+                        rectangleAnnot.Width = result.quads[0].Rx- result.quads[0].Sx+4;
+                        rectangleAnnot.Height = result.quads[0].ca- result.quads[0].Tx+4;
                         rectangleAnnot.Author = annotManager.getCurrentUser();
-                        rectangleAnnot.StrokeColor = 
-
-                        console.log(result.quads);
-
+                        FoundCounter++;
                         return rectangleAnnot;
                   });
                   annotManager.addAnnotations(newAnnotations);
