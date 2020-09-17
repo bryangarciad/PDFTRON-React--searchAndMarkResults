@@ -20,9 +20,15 @@ function SearchSettings(props) {
                 })}
             </ul>
             <button className='roundedBtn' onClick={props.updateState} style={{backgroundColor: props.colorHex}}><FontAwesomeIcon icon={faSearch} /></button>
-            <label className='inputLabel' style={{backgroundColor: props.colorHex}}>Select File
+            <label className='inputLabel' style={{backgroundColor: props.colorHex}}>add file
                 <input id="file_upload" type='file' accept='.pdf' multiple='false' onClick={props.destroy} onChange={props.fileSelected} ref={props.fileInput} ></input>
             </label>
+
+            <ul className='fileList'>
+                {props.fileList.map((item, key)=>{
+                    return <li key={key} className={props.index === key  ? 'selected': 'notSelected'}><a onClick={(e)=>{props.setSearchFile(e,key)}}>{item.name}</a></li>
+                })}
+            </ul>
         </div>
     )
 }

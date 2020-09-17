@@ -48,6 +48,7 @@
    display: flex;
    flex-direction: row;
    margin-left: 0px;
+   
 }
 
 .SearchSettings{
@@ -60,6 +61,7 @@
   border-Color: black ;
   border-Width: 5px ;
   background-Color: #DBDCDB;
+  border-right: black 2px solid;
 }
 .roundedBtn{
   width: 50px;
@@ -184,3 +186,31 @@ ul li span{
   width: 100%;
   margin-top: 10px;
   }
+
+.fileList{
+  list-style: square;
+  margin: 0px;
+  padding: 0px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+  border: black solid 2px;
+  width: 80%;
+  overflow: hidden;
+}
+.fileList li{
+  width: 90%;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-left: 5%;
+  text-align: left  ;
+  border-radius: 60px;
+  overflow: hidden;
+}
+
+.selected{
+  background-color: yellow;
+}
+.notSelected{
+  background-color: transparent;
+}

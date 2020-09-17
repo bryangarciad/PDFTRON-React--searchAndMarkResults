@@ -1,12 +1,7 @@
-import React, {useRef, useEffect, Fragment, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import './App.css';
 import Pdfviewer from './components/pdfviewer';
-import CoolInput from './components/coolinput'
-import { CirclePicker  } from 'react-color';
-import { faSearch, faPlus } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SearchSettings from './components/SearchSettings';
-import { scryRenderedDOMComponentsWithClass } from 'react-dom/test-utils';
 
 
 
@@ -18,6 +13,8 @@ function App() {
   const [colorHex, setColorHex] = useState({r:0,g:0,b:0});
   const [DocSet, setDocSet] = useState(true);
   const [file, setFile] = useState();
+  const [files,setfiles] = useState([  ]);
+  const [index, setInedx] = useState(-1);
   let fileInput = React.createRef();
   const inputRef = useRef(null); 
 
@@ -35,7 +32,7 @@ function App() {
     setDocSet(true);
     if(text !== list[list.length-1] && text!==""){
       const newList = list.concat(text);
-      setColorList(data => [...data, color])
+      setColorList(data => [...data, color]);
       console.log(colorList);
       setList(newList);
       inputRef.current.value = '';
@@ -53,12 +50,22 @@ function App() {
   const fileSelected = () => {
     console.log(fileInput.current.files[0]);
     setFile(fileInput.current.files[0])
+    console.log(file);
+    if(index === -1)
+      setfiles(data => [...data, fileInput.current.files[0]])
   }
   const handleChangeComplete = (color) => {
     setDocSet(true);
     setColor({r:color.rgb.r,g:color.rgb.g, b:color.rgb.b});
     setColorHex(color.hex);
     console.log(color);
+  }
+
+  const setSearchFile = (e, index) =>{
+    setDocSet(true);
+    setInedx(index);
+    setFile(files[index])
+    console.log(file);
   }
 
 
@@ -75,7 +82,11 @@ function App() {
         updateState = {updateState}
         destroy ={destroy}
         fileSelected ={fileSelected}
-        fileInput={fileInput}>
+        fileInput={fileInput}
+        fileList = {files}
+        setSearchFile ={setSearchFile}
+        index = {index}>
+        
       </SearchSettings>
       { !DocSet &&
         <Pdfviewer file={file} searchList = {list} colorList = {colorList}></Pdfviewer> 
