@@ -1,40 +1,44 @@
 import React, {useRef, useEffect, Fragment, useState} from 'react';
 import './App.css';
 import Pdfviewer from './components/pdfviewer';
+import CoolInput from './components/coolinput'
+import { CirclePicker  } from 'react-color';
+import { faSearch, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import SearchSettings from './components/SearchSettings';
+import { scryRenderedDOMComponentsWithClass } from 'react-dom/test-utils';
+
+
 
 function App() {
   const [text, setText] = useState("");
-  const [list, setList] = useState(['Contrato', 'Saldo']);
+  const [list, setList] = useState(['CONTRATO', 'SALDO']);
   const [colorList, setColorList] = useState([{r:255,g:0,b:0}, {r:0,g:255,b:0}]);
-  let fileInput = React.createRef();
+  const [color, setColor] = useState({r:0,g:0,b:0});
+  const [colorHex, setColorHex] = useState({r:0,g:0,b:0});
   const [DocSet, setDocSet] = useState(true);
   const [file, setFile] = useState();
+  let fileInput = React.createRef();
+  const inputRef = useRef(null); 
 
   const getColorRGB = (index) => {
     return `rgb(${colorList[index].r}, ${colorList[index].g}, ${colorList[index].b}`;
-  }
-  const ColorGenerator = () => {
-    let random = [];
-    for (let i = 0; i < 3; i++) {
-      random.push(Math.floor(Math.random()*256));
-    }
-    return random; 
   }
 
   const handleChange = (e) => {
     setDocSet(true);
     if(e.target.value !== "")
-      setText(e.target.value);
+      setText(e.target.value.toUpperCase());
   }
 
   const updateSearch = (e) => {
     setDocSet(true);
     if(text !== list[list.length-1] && text!==""){
       const newList = list.concat(text);
-      const rgbArr = ColorGenerator();
-      setColorList(data => [...data, {r:rgbArr[0],g:rgbArr[1], b:rgbArr[2]}])
+      setColorList(data => [...data, color])
       console.log(colorList);
       setList(newList);
+      inputRef.current.value = '';
     }
   }
 
@@ -50,21 +54,29 @@ function App() {
     console.log(fileInput.current.files[0]);
     setFile(fileInput.current.files[0])
   }
+  const handleChangeComplete = (color) => {
+    setDocSet(true);
+    setColor({r:color.rgb.r,g:color.rgb.g, b:color.rgb.b});
+    setColorHex(color.hex);
+    console.log(color);
+  }
+
 
   return(    
-    <div style={{ height:'100vh', display:'flex', flexDirection:'row',marginLeft:'10px'}}>
-      <div  style={{height:'100vh',width:'20%', display:'flex', flexDirection:'column',marginLeft:'10px'}}>
-        <label>Text to search</label>
-        <input onChange={handleChange} style={{height:'30px', width:'80%'}}></input>
-        <button onClick={updateSearch} style={{height:'30px', width:'50%', marginTop:'10px'}}>Add to search list</button>
-        <ul>
-          {list.map(function(item, key) {
-            return <li key={item}><span style={{backgroundColor: getColorRGB(key)}}>{`${item}`}</span></li>;
-          })}
-        </ul>
-        <input id="file_upload" type='file' accept='.pdf' multiple='false' onClick={destroy} onChange={fileSelected} ref={fileInput} ></input>
-        <button onClick={updateState}>SEARCH</button>
-      </div>
+    <div className='mainWrapper'>
+      <SearchSettings 
+        handleChange={handleChange} 
+        colorHex={colorHex} 
+        inputRef={inputRef} 
+        handleChangeComplete={handleChangeComplete}
+        updateSearch={updateSearch}
+        list={list}
+        getColorRGB={getColorRGB}
+        updateState = {updateState}
+        destroy ={destroy}
+        fileSelected ={fileSelected}
+        fileInput={fileInput}>
+      </SearchSettings>
       { !DocSet &&
         <Pdfviewer file={file} searchList = {list} colorList = {colorList}></Pdfviewer> 
       }
@@ -72,3 +84,4 @@ function App() {
   );
 };
 export default App;
+
